@@ -1,0 +1,8 @@
+# One URL per line:
+# https://example.edu/registrar/add-drop-deadlines
+
+# Or: title|url
+# Registrar Add Drop|https://example.edu/registrar/add-drop-deadlines
+
+# Or: title|url|category
+# Tuition Fees|https://example.edu/finance/fees|fees

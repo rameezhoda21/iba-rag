@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IBA Student Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/frontend/styles.css" />
+  </head>
+  <body>
+    <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+
+    <main class="shell">
+      <section class="hero card animate-in">
+        <p class="eyebrow">IBA RAG CHATBOT</p>
+        <h1>Student Help Desk</h1>
+        <p class="subtitle">
+          Ask policy, fee, and registration questions. Responses are grounded in your indexed IBA sources.
+        </p>
+      </section>
+
+      <section class="chat card animate-in" style="animation-delay: 120ms">
+        <div id="messages" class="messages" aria-live="polite"></div>
+
+        <form id="chat-form" class="composer">
+          <label class="sr-only" for="prompt">Type your question</label>
+          <textarea
+            id="prompt"
+            name="prompt"
+            placeholder="Example: What is the fee per credit hour for undergraduate and MS programs?"
+            rows="2"
+            required
+          ></textarea>
+          <button id="send-btn" type="submit">Ask</button>
+        </form>
+      </section>
+    </main>
+
+    <template id="msg-template">
+      <article class="msg">
+        <p class="role"></p>
+        <p class="text"></p>
+        <ul class="sources"></ul>
+      </article>
+    </template>
+
+    <script src="/frontend/app.js"></script>
+  </body>
+</html>
