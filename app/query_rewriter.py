@@ -16,7 +16,12 @@ class QueryRewriter:
         (r"\bhostel\s+(fee|fees|charges)\s*(details|structure)?\b", "hostel fee structure"),
         (r"\bwhat\s+are\s+hostel\s+charges\b", "hostel fee structure"),
     )
-
+    TERM_REWRITES = (
+        (r"\bgrade\s+criteria\b", "academic eligibility requirement"),
+        (r"\bmarks\b", "grades"),
+        (r"\bget\s+in\b", "admission eligibility"),
+        (r"\badmission\s+criteria\b", "academic eligibility requirements"),
+    )
     def rewrite(self, query: str) -> str:
         rewritten = query.strip()
         if not rewritten:
