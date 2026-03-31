@@ -55,7 +55,7 @@ if prompt := st.chat_input("E.g., What are the hostel charges for BS?"):
             
             # Formulate the response with source tags
             if response.sources:
-                sources_str = "\n\n**Sources:**\n" + "\n".join([f"- {s.title} ({s.source})" for s in response.sources])
+                sources_str = "\n\n**Sources:**\n" + "\n".join([f"- {s}" for s in response.sources])
                 answer_text += sources_str
 
         except Exception as e:
