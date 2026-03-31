@@ -9,14 +9,18 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.append(str(PROJECT_ROOT))
 load_dotenv(PROJECT_ROOT / ".env")
 
-from app.main import qa_system, startup_event
+from app.main import ChatPipeline, startup_event
 
 # Initialize the pipeline state using Streamlit's cache so it doesn't reload heavily every interaction
 @st.cache_resource
-def load_rag_pipeline():
-    # Calling the FastAPI startup logic which builds our main `qa_system` safely
-    startup_event()
-    return qa_system
+def load_rag_pipeline() -> ChatPipeline:
+    # Set up basic logging if needed or skip startup_event if you just want to init ChatPipeline directly
+    import logging
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s | %(levelname)s | %(message)s")
+    
+    # Initialize the ChatPipeline directly since app.main uses a global var pattern for FastAPI
+    pipeline = ChatPipeline()
+    return pipeline
 
 st.set_page_config(page_title="IBA Student Support Chatbot", page_icon="🎓", layout="centered")
 
