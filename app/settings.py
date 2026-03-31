@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 
@@ -45,5 +46,5 @@ class RuntimeSettings:
 
 class ApiServerSettings:
     API_RELOAD = False
-    API_PORT = 8000
+    API_PORT = int(os.getenv("PORT", 8000))
     API_HOST = "0.0.0.0"
