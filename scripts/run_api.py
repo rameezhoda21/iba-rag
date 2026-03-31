@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-import os
 import socket
+import sys
 from pathlib import Path
+
+# Add project root to Python path so we can import 'app'
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(PROJECT_ROOT))
 
 import uvicorn
 
-
-PROJECT_ROOT = Path(__file__).resolve().parents[1]
+from app.settings import ApiServerSettings
 
 
 def get_available_port(host: str, start_port: int, max_tries: int = 25) -> int:
@@ -23,9 +26,9 @@ def get_available_port(host: str, start_port: int, max_tries: int = 25) -> int:
 
 
 if __name__ == "__main__":
-    reload_enabled = os.getenv("API_RELOAD", "false").lower() == "true"
-    api_port = int(os.getenv("API_PORT", "8000"))
-    host = os.getenv("API_HOST", "0.0.0.0")
+    reload_enabled = ApiServerSettings.API_RELOAD
+    api_port = ApiServerSettings.API_PORT
+    host = ApiServerSettings.API_HOST
     chosen_port = get_available_port(host=host, start_port=api_port)
     if chosen_port != api_port:
         print(f"Port {api_port} is busy. Starting API on {chosen_port}.")

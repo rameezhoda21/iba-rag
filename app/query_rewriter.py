@@ -13,13 +13,8 @@ class QueryRewriter:
         (r"\bfee\s+refund\b", "refund policy"),
         (r"\bfail\s+(a\s+)?(subject|course)\b", "failed course policy"),
         (r"\battendance\s+short(age)?\b", "attendance requirement policy"),
-    )
-
-    TERM_REWRITES = (
-        (r"\bgrade\s+criteria\b", "academic eligibility requirement"),
-        (r"\bmarks\b", "grades"),
-        (r"\bget\s+in\b", "admission eligibility"),
-        (r"\badmission\s+criteria\b", "academic eligibility requirements"),
+        (r"\bhostel\s+(fee|fees|charges)\s*(details|structure)?\b", "hostel fee structure"),
+        (r"\bwhat\s+are\s+hostel\s+charges\b", "hostel fee structure"),
     )
 
     def rewrite(self, query: str) -> str:

@@ -15,17 +15,54 @@
   <body>
     <div class="bg-glow bg-glow-1" aria-hidden="true"></div>
     <div class="bg-glow bg-glow-2" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
 
     <main class="shell">
       <section class="hero card animate-in">
-        <p class="eyebrow">IBA RAG CHATBOT</p>
-        <h1>Student Help Desk</h1>
+        <p class="eyebrow">IBA ADMISSIONS KNOWLEDGE ASSISTANT</p>
+        <h1>Answers, not guesswork.</h1>
         <p class="subtitle">
-          Ask policy, fee, and registration questions. Responses are grounded in your indexed IBA sources.
+          Ask about fees, admissions policy, registration, and processes. Every response is grounded in indexed
+          IBA handbook and website content.
         </p>
+
+        <div class="hero-metrics" aria-label="Assistant capabilities">
+          <article>
+            <p class="metric-value">Hybrid</p>
+            <p class="metric-label">Retrieval + rerank</p>
+          </article>
+          <article>
+            <p class="metric-value">Grounded</p>
+            <p class="metric-label">Source-backed answers</p>
+          </article>
+          <article>
+            <p class="metric-value">Fast</p>
+            <p class="metric-label">Built for daily queries</p>
+          </article>
+        </div>
       </section>
 
       <section class="chat card animate-in" style="animation-delay: 120ms">
+        <div class="chat-head">
+          <h2>Ask the assistant</h2>
+          <p id="status-text" class="status">Ready</p>
+        </div>
+
+        <div class="quick-prompts" aria-label="Suggested questions">
+          <button type="button" class="chip" data-prompt="What is the fee per credit hour for undergraduate and MS programs?">
+            Fee per credit hour
+          </button>
+          <button type="button" class="chip" data-prompt="What documents are required for admission?">
+            Required documents
+          </button>
+          <button type="button" class="chip" data-prompt="Can a student apply for rechecking?">
+            Rechecking policy
+          </button>
+          <button type="button" class="chip" data-prompt="What is the admission procedure at IBA?">
+            Admission procedure
+          </button>
+        </div>
+
         <div id="messages" class="messages" aria-live="polite"></div>
 
         <form id="chat-form" class="composer">
@@ -33,18 +70,21 @@
           <textarea
             id="prompt"
             name="prompt"
-            placeholder="Example: What is the fee per credit hour for undergraduate and MS programs?"
+            placeholder="Ask a detailed question, e.g. fee policies for local vs overseas students"
             rows="2"
             required
           ></textarea>
-          <button id="send-btn" type="submit">Ask</button>
+          <button id="send-btn" type="submit">Send</button>
         </form>
       </section>
     </main>
 
     <template id="msg-template">
       <article class="msg">
-        <p class="role"></p>
+        <header class="msg-top">
+          <p class="role"></p>
+          <time class="stamp"></time>
+        </header>
         <p class="text"></p>
         <ul class="sources"></ul>
       </article>

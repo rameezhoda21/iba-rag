@@ -6,6 +6,13 @@ This project ingests handbook + website content, builds embeddings, stores vecto
 
 ## Features
 
+- End-to-end retrieval architecture:
+  - Query -> BM25 + semantic search
+  - RRF fusion
+  - Cross-encoder reranking
+  - LLM answer generation
+  - Post-answer groundedness evaluation
+
 - Section-aware chunking with policy metadata enrichment
 - Multi-query retrieval:
   - original query
@@ -49,18 +56,13 @@ python -m pip install -r requirements.txt
 ## Environment Configuration
 
 1. Copy `.env.example` to `.env`
-2. Fill in required values:
+2. Fill in secret keys only:
 
-- Vector DB:
-  - `VECTOR_DB=pinecone` (or `faiss`)
-  - `PINECONE_API_KEY` if using Pinecone
-- LLM:
-  - `LLM_PROVIDER=huggingface` or `openai`
-  - If using OpenAI-compatible providers (for example Groq), set:
-    - `LLM_BASE_URL`
-    - `LLM_API_KEY`
+- `GROQ_API_KEY` for LLM inference (Groq)
+- `PINECONE_API_KEY` for Pinecone vector DB access
+- `HF_API_TOKEN` for HuggingFace model downloads
 
-Important retrieval settings are already included in `.env.example`.
+All tuning and runtime behavior is configured in code under `app/settings.py`.
 
 ## Data Preparation Workflow
 

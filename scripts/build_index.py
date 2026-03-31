@@ -3,7 +3,12 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import sys
 from pathlib import Path
+
+# Add project root to Python path so we can import 'app'
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.append(str(PROJECT_ROOT))
 
 from dotenv import load_dotenv
 
@@ -16,6 +21,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from app.embeddings import EmbeddingConfig, EmbeddingService, save_embeddings  # noqa: E402
 from app.rag_pipeline import load_chunks_jsonl  # noqa: E402
+from app.settings import RuntimeSettings  # noqa: E402
 from app.retriever import FaissVectorStore, PineconeVectorStore  # noqa: E402
 
 
@@ -44,39 +50,39 @@ def main() -> None:
     parser.add_argument(
         "--embed-provider",
         type=str,
-        default=os.getenv("EMBED_PROVIDER", "sentence-transformers"),
+        default=RuntimeSettings.EMBED_PROVIDER,
         choices=["sentence-transformers", "openai"],
     )
     parser.add_argument(
         "--embed-model",
         type=str,
-        default=os.getenv("EMBED_MODEL", "sentence-transformers/all-MiniLM-L6-v2"),
+        default=RuntimeSettings.EMBED_MODEL,
     )
     parser.add_argument(
         "--vector-db",
         type=str,
-        default=os.getenv("VECTOR_DB", "pinecone"),
+        default=RuntimeSettings.VECTOR_DB,
         choices=["pinecone", "faiss"],
     )
     parser.add_argument(
         "--pinecone-index",
         type=str,
-        default=os.getenv("PINECONE_INDEX_NAME", "iba-rag-chatbot"),
+        default=RuntimeSettings.PINECONE_INDEX_NAME,
     )
     parser.add_argument(
         "--pinecone-namespace",
         type=str,
-        default=os.getenv("PINECONE_NAMESPACE", "iba"),
+        default=RuntimeSettings.PINECONE_NAMESPACE,
     )
     parser.add_argument(
         "--pinecone-cloud",
         type=str,
-        default=os.getenv("PINECONE_CLOUD", "aws"),
+        default=RuntimeSettings.PINECONE_CLOUD,
     )
     parser.add_argument(
         "--pinecone-region",
         type=str,
-        default=os.getenv("PINECONE_REGION", "us-east-1"),
+        default=RuntimeSettings.PINECONE_REGION,
     )
 
     args = parser.parse_args()
@@ -89,7 +95,7 @@ def main() -> None:
         EmbeddingConfig(
             provider=args.embed_provider,
             model_name=args.embed_model,
-            api_key=os.getenv("EMBED_API_KEY") or os.getenv("OPENAI_API_KEY"),
+            api_key=os.getenv("HF_API_TOKEN"),
         )
     )
 

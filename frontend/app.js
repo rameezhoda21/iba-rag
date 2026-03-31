@@ -3,6 +3,19 @@ const promptInput = document.getElementById("prompt");
 const sendBtn = document.getElementById("send-btn");
 const messagesEl = document.getElementById("messages");
 const template = document.getElementById("msg-template");
+const statusText = document.getElementById("status-text");
+const chips = document.querySelectorAll(".chip");
+
+function formatTime(now = new Date()) {
+  return now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+function setBusyState(isBusy) {
+  sendBtn.disabled = isBusy;
+  sendBtn.textContent = isBusy ? "Thinking" : "Send";
+  statusText.textContent = isBusy ? "Generating answer" : "Ready";
+  statusText.classList.toggle("busy", isBusy);
+}
 
 function appendMessage(role, text, sources = [], variant = role.toLowerCase()) {
   const node = template.content.firstElementChild.cloneNode(true);
@@ -10,6 +23,7 @@ function appendMessage(role, text, sources = [], variant = role.toLowerCase()) {
 
   node.querySelector(".role").textContent = role;
   node.querySelector(".text").textContent = text;
+  node.querySelector(".stamp").textContent = formatTime();
 
   const sourcesEl = node.querySelector(".sources");
   if (sources.length === 0) {
@@ -28,9 +42,16 @@ function appendMessage(role, text, sources = [], variant = role.toLowerCase()) {
 
 appendMessage(
   "Assistant",
-  "Hi! Ask me anything about IBA policies, fees, registration, and student information.",
+  "Hi! I can help with IBA admissions policy, fees, registration, and required documents. Ask anything.",
   []
 );
+
+chips.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    promptInput.value = chip.dataset.prompt || "";
+    promptInput.focus();
+  });
+});
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -42,8 +63,7 @@ form.addEventListener("submit", async (event) => {
 
   appendMessage("You", message);
   promptInput.value = "";
-  sendBtn.disabled = true;
-  sendBtn.textContent = "Thinking...";
+  setBusyState(true);
 
   try {
     const response = await fetch("/chat", {
@@ -62,8 +82,7 @@ form.addEventListener("submit", async (event) => {
   } catch (err) {
     appendMessage("Assistant", `Error: ${err.message}`, [], "error");
   } finally {
-    sendBtn.disabled = false;
-    sendBtn.textContent = "Ask";
+    setBusyState(false);
     promptInput.focus();
   }
 });

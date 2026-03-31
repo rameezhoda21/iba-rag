@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from huggingface_hub import InferenceClient
 
@@ -27,6 +27,9 @@ class AnswerGenerator:
         "Do not combine conflicting details from different student groups/program tracks in one blended statement. "
         "If context spans multiple audiences, separate them clearly with labeled bullets or ask a brief clarification. "
         "Prefer one coherent policy track when user scope is ambiguous. "
+        "For multi-program fee questions, answer entity-by-entity and never substitute one program for another. "
+        "If a requested entity is missing, explicitly say that entity is missing. "
+        "Use format like '- Undergraduate: ...' and '- MS: ...' when multiple entities are requested. "
         "Return valid JSON with keys: answer (string), sources (array of strings)."
     )
 
@@ -202,6 +205,7 @@ class AnswerGenerator:
         expanded_query: str | None = None,
         intent_label: str | None = None,
         official_policy_term: str | None = None,
+        entity_constraints: Dict[str, object] | None = None,
     ) -> dict:
         if not chunks:
             return {
@@ -222,6 +226,20 @@ class AnswerGenerator:
             query_details.append(f"Detected intent: {intent_label}")
         if official_policy_term:
             query_details.append(f"Official policy term to use when relevant: {official_policy_term}")
+        if entity_constraints:
+            metric = str(entity_constraints.get("metric", "") or "").strip()
+            programs = entity_constraints.get("programs", [])
+            query_type = str(entity_constraints.get("query_type", "") or "").strip()
+            missing_programs = entity_constraints.get("missing_programs", [])
+
+            if metric:
+                query_details.append(f"Requested metric: {metric}")
+            if isinstance(programs, list) and programs:
+                query_details.append(f"Requested programs/entities: {', '.join(str(p) for p in programs)}")
+            if query_type:
+                query_details.append(f"Query type: {query_type}")
+            if isinstance(missing_programs, list) and missing_programs:
+                query_details.append(f"Missing entities after retrieval validation: {', '.join(str(p) for p in missing_programs)}")
 
         user_prompt = (
             f"Query details:\n" + "\n".join(query_details) + "\n\n"
@@ -231,6 +249,8 @@ class AnswerGenerator:
             "Return a concise final answer, avoid irrelevant details, and mention the official policy term when available.\n"
             "If multiple audience/program tracks appear in context, do not merge their numbers blindly.\n"
             "Either present grouped bullets by audience labels or ask a brief clarification.\n"
+            "If requested programs/entities are provided, answer strictly for them and do not substitute near matches.\n"
+            "If one requested entity is not present, state exactly which one is missing.\n"
             "Respond in JSON only."
         )
 

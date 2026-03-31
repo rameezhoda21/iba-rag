@@ -59,6 +59,20 @@ INTENT_RULES: Dict[str, dict] = {
         "negative_categories": ["attendance", "library"],
         "official_policy_term": "admission academic eligibility requirement",
     },
+    "hostel": {
+        "keywords": [
+            "hostel",
+            "hostel fee",
+            "hostel fees",
+            "hostel charge",
+            "hostel charges",
+            "room type",
+            "accommodation",
+        ],
+        "preferred_categories": ["hostel", "fees", "finance"],
+        "negative_categories": ["transport", "attendance", "library"],
+        "official_policy_term": "hostel accommodation fee",
+    },
     "fees": {
         "keywords": [
             "fee",
@@ -70,7 +84,7 @@ INTENT_RULES: Dict[str, dict] = {
             "credit hour",
         ],
         "preferred_categories": ["fees", "finance", "accounts"],
-        "negative_categories": ["attendance", "library"],
+        "negative_categories": ["attendance", "library", "hostel", "transport"],
         "official_policy_term": "fees and refund policy",
     },
     "deadlines": {
