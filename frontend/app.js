@@ -12,9 +12,14 @@ function formatTime(now = new Date()) {
 
 function setBusyState(isBusy) {
   sendBtn.disabled = isBusy;
-  sendBtn.textContent = isBusy ? "Thinking" : "Send";
-  statusText.textContent = isBusy ? "Generating answer" : "Ready";
+  statusText.textContent = isBusy ? "Generating answer..." : "Ready";
   statusText.classList.toggle("busy", isBusy);
+  
+  if (isBusy) {
+    statusText.classList.add("typing");
+  } else {
+    statusText.classList.remove("typing");
+  }
 }
 
 function appendMessage(role, text, sources = [], variant = role.toLowerCase()) {
@@ -26,63 +31,75 @@ function appendMessage(role, text, sources = [], variant = role.toLowerCase()) {
   node.querySelector(".stamp").textContent = formatTime();
 
   const sourcesEl = node.querySelector(".sources");
-  if (sources.length === 0) {
+  if (!sources || sources.length === 0) {
     sourcesEl.remove();
   } else {
+    sourcesEl.textContent = "Sources:";
+    const ul = document.createElement("ul");
     for (const src of sources) {
       const li = document.createElement("li");
       li.textContent = src;
-      sourcesEl.appendChild(li);
+      ul.appendChild(li);
     }
+    sourcesEl.appendChild(ul);
   }
 
   messagesEl.appendChild(node);
   messagesEl.scrollTop = messagesEl.scrollHeight;
+  return node;
 }
 
-appendMessage(
-  "Assistant",
-  "Hi! I can help with IBA admissions policy, fees, registration, and required documents. Ask anything.",
-  []
-);
-
-chips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    promptInput.value = chip.dataset.prompt || "";
-    promptInput.focus();
+function setupChips() {
+  chips.forEach((chip) => {
+    chip.addEventListener("click", () => {
+      promptInput.value = chip.dataset.prompt || chip.innerText.trim();
+      form.requestSubmit();
+    });
   });
+}
+
+promptInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    form.requestSubmit();
+  }
 });
 
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-  const message = promptInput.value.trim();
-  if (!message) {
-    return;
-  }
+  const query = promptInput.value.trim();
+  if (!query) return;
 
-  appendMessage("You", message);
   promptInput.value = "";
+  promptInput.style.height = "auto";
+  
+  appendMessage("You", query);
   setBusyState(true);
 
   try {
-    const response = await fetch("/chat", {
+    const res = await fetch("http://127.0.0.1:8000/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
+      body: JSON.stringify({ text: query }),
     });
 
-    const payload = await response.json();
-    if (!response.ok) {
-      const detail = payload?.detail || "Request failed";
-      throw new Error(detail);
-    }
-
-    appendMessage("Assistant", payload.answer || "No answer returned.", payload.sources || []);
+    if (!res.ok) throw new Error("Server response was not ok");
+    
+    const data = await res.json();
+    appendMessage("Assistant", data.message, data.sources);
   } catch (err) {
-    appendMessage("Assistant", `Error: ${err.message}`, [], "error");
+    console.error("Chat error:", err);
+    appendMessage("System", "Failed to connect to the assistant server. Please ensure the backend API is running.", [], "error");
   } finally {
     setBusyState(false);
     promptInput.focus();
   }
 });
+
+promptInput.addEventListener("input", function() {
+  this.style.height = "auto";
+  this.style.height = (this.scrollHeight) + "px";
+});
+
+setupChips();

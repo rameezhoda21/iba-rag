@@ -70,24 +70,24 @@
           <textarea
             id="prompt"
             name="prompt"
-            placeholder="Ask a detailed question, e.g. fee policies for local vs overseas students"
-            rows="2"
+            placeholder="Ask anything about admissions, fees, or rules..."
+            rows="1"
             required
           ></textarea>
-          <button id="send-btn" type="submit">Send</button>
+          <button id="send-btn" type="submit" aria-label="Send message"></button>
         </form>
       </section>
     </main>
 
     <template id="msg-template">
-      <article class="msg">
+      <div class="msg">
         <header class="msg-top">
-          <p class="role"></p>
+          <span class="role"></span>
           <time class="stamp"></time>
         </header>
         <p class="text"></p>
-        <ul class="sources"></ul>
-      </article>
+        <div class="sources"></div>
+      </div>
     </template>
 
     <script src="/frontend/app.js"></script>
