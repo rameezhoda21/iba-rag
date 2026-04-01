@@ -13,7 +13,7 @@ class RuntimeSettings:
     EMBED_PROVIDER = "sentence-transformers"
     EMBED_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
     LLM_PROVIDER = "openai"  # Groq uses OpenAI-compatible client
-    LLM_MODEL = "Qwen/Qwen2.5-72B-Instruct"
+    LLM_MODEL = "llama-3.3-70b-versatile"
     LLM_BASE_URL = "https://api.groq.com/openai/v1"
 
     # Pinecone non-secret settings
